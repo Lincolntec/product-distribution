@@ -32,46 +32,33 @@ public class ProductService {
 
 	private Prod prod = null;
 
-	int i = 0;
-
 	@Transactional
 	public void productCalculation(ProductDTO productDTO) {
 
-		System.out.println(
-				"TestettttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttStory: "
-						+ productDTO.getStoryQuantity());
-
 		sotory = productDTO.getStoryQuantity();
-		System.out.println("Retorno Produto: " + productDTO.getProduct());
 
 		List<Prod> list = new ArrayList<Prod>();
-		// list = productRepository.findByProductEquals(product);
+		 list = productRepository.findByProductEquals(productDTO.getProduct());
 
-		// System.out.println("Quantidade Produtos"+ list.size());
+		int media = (list.size() ) / sotory;
 
-		list = productRepository.findAll();
-
-		list.forEach(p -> {
-
-			System.out.println("Produtos: " + p.getProduct());
-
-			if (p.getProduct().equalsIgnoreCase("EMMS")) {
-				System.out.println("****Produtos: " + p.getProduct());
-				i++;
-				System.out.println(
-						"****************************************************Quantidade de produtos EMMS: " + i);
-			}
-
-		});
-
-		System.out.println("Valor Storyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy: " + sotory);
-
-		int media = (i + 1) / sotory;
-
-		System.out.println("Média: " + media);
-
-		i = 0;
-		sotory = 0;
+		int resto = (list.size()) - (productDTO.getStoryQuantity() * media) ;
+		
+		try {
+			
+			int divisaoResto = productDTO.getStoryQuantity() / resto;
+			
+		} catch (Exception e) {
+			System.out.println("não é possivel divisão por zero!!");
+			
+		}
+		
+		int modResto = productDTO.getStoryQuantity() - resto;
+		
+		int empresaComMaisProdutos = productDTO.getStoryQuantity() - modResto ;
+		
+		System.out.println("** Existem "+ productDTO.getStoryQuantity() + " empresas, " + list.size() +" produtos. "  + empresaComMaisProdutos +" empresas ficaram com "+(media + 1) +" produtos e " + modResto+" empresa ficaram com  "+media +" produto.");
+		
 
 	}
 
@@ -109,7 +96,13 @@ public class ProductService {
 
 					});
 
-					this.productRepository.saveAll(listProd);
+					try {
+						this.productRepository.saveAll(listProd);
+						
+					} catch (Exception e) {
+						System.out.println("Error na gravação do arquivo favor iniciar a aplicação novamente");
+					}
+				
 
 				}
 			}
