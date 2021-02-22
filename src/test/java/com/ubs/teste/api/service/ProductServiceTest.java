@@ -79,7 +79,7 @@ public class ProductServiceTest {
 
 		prod.setIndustry(datum.getIndustry());
 		prod.setOrigin(datum.getOrigin());
-		prod.setPrice(datum.getPrice());
+	//	prod.setPrice(datum.getPrice());
 		prod.setProduct(datum.getProduct());
 		prod.setQuantity(datum.getQuantity());
 		prod.setType(datum.getType());

@@ -5,6 +5,8 @@ public class ProductDTO {
 	private String product;
 	
 	private Integer storyQuantity;
+	
+	
 
 	public String getProduct() {
 		return product;
@@ -21,7 +23,6 @@ public class ProductDTO {
 	public void setStoryQuantity(Integer storyQuantity) {
 		this.storyQuantity = storyQuantity;
 	}
-	
-	
+
 
 }

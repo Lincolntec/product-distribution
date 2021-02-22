@@ -23,7 +23,7 @@ public class Prod implements Serializable{
 	
 	private String product;
 	private Integer quantity;
-	private String price;
+	private Double price;
 	private String type;
 	private String industry;
 	private String origin;
@@ -45,12 +45,7 @@ public class Prod implements Serializable{
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
-	public String getPrice() {
-		return price;
-	}
-	public void setPrice(String price) {
-		this.price = price;
-	}
+	
 	public String getType() {
 		return type;
 	}
@@ -68,6 +63,15 @@ public class Prod implements Serializable{
 	}
 	public void setOrigin(String origin) {
 		this.origin = origin;
+	}
+	
+	
+	
+	public Double getPrice() {
+		return price;
+	}
+	public void setPrice(Double price) {
+		this.price = price;
 	}
 	@Override
 	public int hashCode() {
