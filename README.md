@@ -33,3 +33,5 @@ Empresa: GFT
 Cargo: Desenvolvedor Java.
 
 GitHub: [Lincolntec (Alcino José Lincoln de Souza.) · GitHub](https://github.com/Lincolntec)
+
+Versão Web: https://github.com/Lincolntec/product-distribution-web 
