@@ -9,24 +9,24 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import junit.framework.Assert;
 
-public class ReadControllerTest {
-	
-	@Autowired
-	MockMvc mvc;
-	
-	@Test
-	public void save() {
-		
-		MvcResult mvcResult;
-		
-		try {
-			mvcResult = mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/read")).andDo(System.err::print).andReturn();
-			
-			Assert.assertEquals(HttpStatus.OK, mvcResult.getResponse());
-			
-		} catch (Exception e) {
-			
-		}
-	}
+class ReadControllerTest {
+
+    @Autowired
+    MockMvc mvc;
+
+    @Test
+    void save() {
+
+        MvcResult mvcResult;
+
+        try {
+            mvcResult = mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/read")).andDo(System.err::print).andReturn();
+
+            Assert.assertEquals(HttpStatus.OK, mvcResult.getResponse());
+
+        } catch (Exception e) {
+
+        }
+    }
 
 }

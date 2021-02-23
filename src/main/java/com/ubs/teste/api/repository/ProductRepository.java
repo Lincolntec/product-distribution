@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.ubs.teste.api.model.Prod;
 
 public interface ProductRepository extends JpaRepository<Prod, Long> {
-	
-	public List<Prod> findByProductEquals(String produto);
+
+    public List<Prod> findByProductEquals(String produto);
 
 }

@@ -6,9 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,170 +24,134 @@ import com.ubs.teste.api.repository.ProductRepository;
 @Service
 public class ProductService {
 
+    private static Logger logger = LoggerFactory.getLogger(ProductService.class);
 
-	@Autowired
-	private ProductRepository productRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
-	private List<Prod> listProd = new ArrayList<>();
-	List<Prod> products;
+    private List<Prod> listProd;
 
-	private int sotory = 0;
-	
-	private Prod prod = null;
+    private Prod prod = null;
 
-	@Transactional
-	public DistribuitionDTO productCalculation(ProductDTO productDTO) {
+    @Transactional
+    public List<Prod> findAll() {
 
-		DistribuitionDTO distribuitionDTO = new DistribuitionDTO();
-		
-		sotory = productDTO.getStoryQuantity();
-		
+        logger.info("Starting the findAll method");
 
-		List<Prod> list = new ArrayList<Prod>();
-		 list = productRepository.findByProductEquals(productDTO.getProduct());
+        List<Prod> prods = productRepository.findAll();
 
-		int media = (list.size() ) / sotory;
+        logger.info("Ending the findAll method");
 
-		int resto = (list.size()) - (productDTO.getStoryQuantity() * media) ;
-		
-		try {
-			
-			int divisaoResto = productDTO.getStoryQuantity() / resto;
-			
-		} catch (Exception e) {
-			System.out.println("não é possivel divisão por zero!!");
-			
-		}
-		
-		int modResto = productDTO.getStoryQuantity() - resto;
-		
-		int empresaComMaisProdutos = productDTO.getStoryQuantity() - modResto ;
-		
-		implementsTheDistribuition(productDTO, distribuitionDTO, list, media, modResto, empresaComMaisProdutos);
-		
-		
-		System.out.println("** Existem "+ productDTO.getStoryQuantity() + " empresas, " + list.size() +" produtos. "  + empresaComMaisProdutos +" empresas ficaram com "+(media + 1) +
-					" produtos e " + modResto+" empresa ficaram com  "+media +" produto.");
-		
-		return distribuitionDTO;
+        return prods;
+    }
 
-	}
+    public void read() {
 
-	private void implementsTheDistribuition(ProductDTO productDTO, DistribuitionDTO distribuitionDTO, List<Prod> list,
-			int media, int modResto, int empresaComMaisProdutos) {
-		distribuitionDTO.setStoryQuantity(productDTO.getStoryQuantity());
-		distribuitionDTO.setTotalQuantityProducts(list.size());
-		distribuitionDTO.setCompaneisWhitMoreProducts(empresaComMaisProdutos);
-		distribuitionDTO.setBiggerProduct(media+1);
-		distribuitionDTO.setCompaniesWithFewerProducts(modResto);
-		distribuitionDTO.setSmallerProduct(media);
-	}
+        logger.info("Starting the read method");
 
-	@Transactional
-	public List<Prod> findAll() {
+        listProd = new ArrayList<>();
 
-		List<Prod> prods = new ArrayList<>();
+        try {
+            Product product = null;
 
-		prods = productRepository.findAll();
+            File diretorio = new File("./arquivos");
+            if (diretorio.isDirectory()) {
+                for (File arquivo : diretorio.listFiles()) {
+                    Gson gson = new Gson();
+                    BufferedReader reader = new BufferedReader(new FileReader(arquivo));
 
-		return prods;
-	}
+                    product = gson.fromJson(reader, Product.class);
 
-	public void read() {
+                    logger.info("Finishes reading data from files.");
 
-		System.out.println("Iniciando Leitura");
-		try {
-			Product product = null;
+                    product.getData().parallelStream().forEach(datum -> {
+                        prod = new Prod();
 
-			File diretorio = new File("./arquivos");
-			if (diretorio.isDirectory()) {
-				File arquivos[] = diretorio.listFiles();
-				for (File arquivo : arquivos) {
-					Gson gson = new Gson();
-					BufferedReader reader = new BufferedReader(new FileReader(arquivo));
+                        if (datum != null) {
 
-					product = gson.fromJson(reader, Product.class);
+                            this.convertToProduct(datum, prod);
+                        }
 
-					product.getData().parallelStream().forEach(datum -> {
-						prod = new Prod();
+                    });
 
-						if (datum != null) {
+                    try {
+                        logger.info("Saving files started.");
+                        this.productRepository.saveAll(listProd);
 
-							this.convertToPrord(datum, prod);
-						}
+                    } catch (Exception e) {
+                        System.out.println("Error writing files");
+                    }
 
-					});
+                    logger.info("Finished recording the files.");
+                }
+            }
+        } catch (FileNotFoundException ex) {
 
-					try {
-						this.productRepository.saveAll(listProd);
-						System.out.println("Iniciando Gravação");
-					} catch (Exception e) {
-						System.out.println("Error na gravação do arquivo favor iniciar a aplicação novamente");
-					}
-				
-					System.out.println("Finalizado Gravaçao");
-				}
-			}
-		} catch (FileNotFoundException ex) {
-			Logger.getLogger(Prod.class.getName()).log(Level.SEVERE, null, ex);
-		}
+            logger.error("Error: " + ex.toString());
+        }
 
-	}
+    }
 
-	private void convertToPrord(Datum datum, Prod prod) {
+    public DistribuitionDTO distributionAverageProductValue(ProductDTO productDTO) {
 
-		prod.setIndustry(datum.getIndustry());
-		prod.setOrigin(datum.getOrigin());
-		
-		prod.setPrice(Double.parseDouble(datum.getPrice().replace("$", "")));
-		prod.setProduct(datum.getProduct());
-		prod.setQuantity(datum.getQuantity());
-		prod.setType(datum.getType());
+        logger.info("Starting the distributionAverageProductValue method");
 
-		listProd.add(prod);
+        DistribuitionDTO distribuitionDTO = new DistribuitionDTO();
 
-	}
-	
-	public DistribuitionDTO distributionAverageProductValue(ProductDTO productDTO) {
-		
-DistribuitionDTO distribuitionDTO = new DistribuitionDTO();
-		
-		sotory = productDTO.getStoryQuantity();
-		
+        int story = productDTO.getStoryQuantity();
 
-		List<Prod> list = new ArrayList<Prod>();
-		 list = productRepository.findByProductEquals(productDTO.getProduct());
+        List<Prod> list = productRepository.findByProductEquals(productDTO.getProduct());
 
-		int media = (list.size() ) / sotory;
+        int media = (list.size()) / story;
 
-		int resto = (list.size()) - (productDTO.getStoryQuantity() * media) ;
-		
-		try {
-			
-			int divisaoResto = productDTO.getStoryQuantity() / resto;
-			
-		} catch (Exception e) {
-			System.out.println("não é possivel divisão por zero!!");
-			
-		}
-		
-		int modResto = productDTO.getStoryQuantity() - resto;
-		
-		int empresaComMaisProdutos = productDTO.getStoryQuantity() - modResto ;
-		
-		implementsTheDistribuition(productDTO, distribuitionDTO, list, media, modResto, empresaComMaisProdutos);
-		
-		
-		System.out.println("** Existem "+ productDTO.getStoryQuantity() + " empresas, " + list.size() +" produtos. "  + empresaComMaisProdutos +" empresas ficaram com "+(media + 1) +
-					" produtos e " + modResto+" empresa ficaram com  "+media +" produto.");
-		
-		System.out.println("Valor medio da empresa 1: " + ((media + 1) * prod.getPrice()));
-		
-		System.out.println("O valor medio da empresa 2 é: " + (media) * prod.getPrice());
-		
-		System.out.println("Valor de cada produto: " + prod.getPrice());
-		
-		return distribuitionDTO;
-	}
-	
+        int resto = (list.size()) - (productDTO.getStoryQuantity() * media);
+
+        int modResto = productDTO.getStoryQuantity() - resto;
+
+        int empresaComMaisProdutos = productDTO.getStoryQuantity() - modResto;
+
+        implementsTheDistribuition(productDTO, distribuitionDTO, list, media, modResto, empresaComMaisProdutos);
+
+        System.out.println("** Existem " + productDTO.getStoryQuantity() + " empresas, " + list.size() + " produtos. "
+                + empresaComMaisProdutos + " empresas ficaram com " + (media + 1) + " produtos e " + modResto
+                + " empresa ficaram com  " + media + " produto.");
+
+        System.out.println("Valor medio da empresa 1: " + ((media + 1) * prod.getPrice()));
+
+        System.out.println("O valor medio da empresa 2 é: " + (media) * prod.getPrice());
+
+        System.out.println("Valor de cada produto: " + prod.getPrice());
+
+        return distribuitionDTO;
+    }
+
+    private void convertToProduct(Datum datum, Prod prod) {
+
+        logger.info("Starting the convertToProduct method");
+
+        prod.setIndustry(datum.getIndustry());
+        prod.setOrigin(datum.getOrigin());
+
+        prod.setPrice(Double.parseDouble(datum.getPrice().replace("$", "")));
+        prod.setProduct(datum.getProduct());
+        prod.setQuantity(datum.getQuantity());
+        prod.setType(datum.getType());
+
+        listProd.add(prod);
+
+    }
+
+    private void implementsTheDistribuition(ProductDTO productDTO, DistribuitionDTO distribuitionDTO, List<Prod> list,
+                                            int media, int modResto, int empresaComMaisProdutos) {
+
+        logger.info("Starting the implementsTheDistribuition method");
+
+        distribuitionDTO.setStoryQuantity(productDTO.getStoryQuantity());
+        distribuitionDTO.setTotalQuantityProducts(list.size());
+        distribuitionDTO.setCompaneisWhitMoreProducts(empresaComMaisProdutos);
+        distribuitionDTO.setBiggerProduct(media + 1);
+        distribuitionDTO.setCompaniesWithFewerProducts(modResto);
+        distribuitionDTO.setSmallerProduct(media);
+    }
+
 }

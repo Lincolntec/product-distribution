@@ -2,6 +2,8 @@ package com.ubs.teste.api.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,21 +19,23 @@ import com.ubs.teste.api.service.ProductService;
 @RequestMapping("/read")
 public class ReadController {
 
-	@Autowired
-	private ProductService productService;
+    private static Logger logger = LoggerFactory.getLogger(ReadController.class);
 
-	@GetMapping
-	@ResponseStatus(HttpStatus.OK)
-	public void save(ProductDTO productDTO) {
+    @Autowired
+    private ProductService productService;
 
-		productService.read();
-	}
-	
-	@GetMapping("/listar")
-	@ResponseStatus(HttpStatus.OK)
-	public List<Prod> listar(ProductDTO productDTO) {
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public void save(ProductDTO productDTO) {
+        logger.info("Starting the Save method");
+        productService.read();
+    }
 
-		return productService.findAll();
-	}
+    @GetMapping("/listar")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Prod> listar(ProductDTO productDTO) {
+        logger.info("Starting the Save method");
+        return productService.findAll();
+    }
 
 }

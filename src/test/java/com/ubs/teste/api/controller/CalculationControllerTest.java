@@ -11,69 +11,70 @@ import com.ubs.teste.api.dto.ProductDTO;
 
 import junit.framework.Assert;
 
-public class CalculationControllerTest {
+class CalculationControllerTest {
 
-	@Autowired
-	MockMvc mvc;
+    @Autowired
+    MockMvc mvc;
 
-	@Test
-	public void calculationController() {
+    @Test
+    void calculationController() {
 
-		MvcResult mvcResult;
+        MvcResult mvcResult;
 
-		try {
-			mvcResult = mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/calculation"))
-					.andDo(System.err::print).andReturn();
+        try {
+            mvcResult = mvc.perform(MockMvcRequestBuilders.get("http://localhost:8080/calculation"))
+                    .andDo(System.err::print).andReturn();
 
-			Assert.assertEquals(HttpStatus.OK, mvcResult.getResponse());
+            Assert.assertEquals(HttpStatus.OK, mvcResult.getResponse());
 
-		} catch (Exception e) {
+        } catch (Exception e) {
 
-		}
-	}
+        }
+    }
 
-	@Test
-	public void calculation() {
 
-		ProductDTO prod = new ProductDTO();
-		prod.setProduct("EMMS");
-		prod.setStoryQuantity(5);
+    @Test
+    void calculation() {
 
-		int qtdProduct = 11;
+        ProductDTO prod = new ProductDTO();
+        prod.setProduct("EMMS");
+        prod.setStoryQuantity(5);
 
-		int media = qtdProduct / prod.getStoryQuantity();
+        int qtdProduct = 11;
 
-		System.out.println("Media:" + media);
+        int media = qtdProduct / prod.getStoryQuantity();
 
-		// int resultado = prod.getStoryQuantity() % media;
-		int resultado = qtdProduct % prod.getStoryQuantity();
+        System.out.println("Media:" + media);
 
-		System.out.println("Resultado do mod: " + resultado);
+        // int resultado = prod.getStoryQuantity() % media;
+        int resultado = qtdProduct % prod.getStoryQuantity();
 
-		System.out.println("Existem " + prod.getStoryQuantity() + " empresas cada uma ficará com " + media
-				+ " produtos e o restante ficará com " + resultado);
+        System.out.println("Resultado do mod: " + resultado);
 
-		int sobra = prod.getStoryQuantity() - resultado;
+        System.out.println("Existem " + prod.getStoryQuantity() + " empresas cada uma ficará com " + media
+                + " produtos e o restante ficará com " + resultado);
 
-		if (media >= 2) {
-			media = media + 1;
-			System.out.println("Existem " + prod.getStoryQuantity() + " empresas " + (media + 1)
-					+ " empresas ficaram com " + media + " produtos e o restante ficará com " + sobra);
+        int sobra = prod.getStoryQuantity() - resultado;
 
-			int teste = ((media + 1) * media);
+        if (media >= 2) {
+            media = media + 1;
+            System.out.println("Existem " + prod.getStoryQuantity() + " empresas " + (media + 1)
+                    + " empresas ficaram com " + media + " produtos e o restante ficará com " + sobra);
 
-			int teste2 = qtdProduct - teste;
+            int teste = ((media + 1) * media);
 
-			int teste3 = prod.getStoryQuantity() - resultado;
+            int teste2 = qtdProduct - teste;
 
-			System.out.println("Existem " + prod.getStoryQuantity() + " empresas " + (media + 1)
-					+ " empresas ficaram com " + media + " produtos e o restante ficará com " + teste2);
+            int teste3 = prod.getStoryQuantity() - resultado;
 
-			System.out.println(
-					"Existem " + prod.getStoryQuantity() + " empresas " + (media + 1) + " empresas ficaram com " + media
-							+ " produtos e " + teste3 + " empresa ficará com " + (media - 1));
+            System.out.println("Existem " + prod.getStoryQuantity() + " empresas " + (media + 1)
+                    + " empresas ficaram com " + media + " produtos e o restante ficará com " + teste2);
 
-		}
+            System.out.println(
+                    "Existem " + prod.getStoryQuantity() + " empresas " + (media + 1) + " empresas ficaram com " + media
+                            + " produtos e " + teste3 + " empresa ficará com " + (media - 1));
 
-	}
+        }
+
+    }
 }

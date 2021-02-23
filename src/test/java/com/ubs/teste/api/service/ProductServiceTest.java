@@ -17,77 +17,77 @@ import com.ubs.teste.api.dto.Datum;
 import com.ubs.teste.api.dto.Product;
 import com.ubs.teste.api.model.Prod;
 
-public class ProductServiceTest {
+class ProductServiceTest {
 
-	private List<Prod> listProd = new ArrayList<>();
+    private List<Prod> listProd = new ArrayList<>();
 
-	private Prod prod;
+    private Prod prod;
 
-	@Test
-	public void read() {
+    @Test
+    void read() {
 
-		try {
+        try {
 
-			File diretorio = new File("./arquivos");
-			if (diretorio.isDirectory()) {
-				File arquivos[] = diretorio.listFiles();
-				for (File arquivo : arquivos) {
-					BufferedReader reader = new BufferedReader(new FileReader(arquivo));
+            File diretorio = new File("./arquivos");
+            if (diretorio.isDirectory()) {
+                File arquivos[] = diretorio.listFiles();
+                for (File arquivo : arquivos) {
+                    BufferedReader reader = new BufferedReader(new FileReader(arquivo));
 
-					Assert.assertNotNull(reader);
-				}
-			}
-		} catch (FileNotFoundException ex) {
-			Logger.getLogger(Prod.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
+                    Assert.assertNotNull(reader);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Prod.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
-	@Test
-	public void readAndConvertToObj() {
-		try {
-			Product product = null;
+    @Test
+    void readAndConvertToObj() {
+        try {
+            Product product = null;
 
-			File diretorio = new File("./arquivos");
-			if (diretorio.isDirectory()) {
-				File arquivos[] = diretorio.listFiles();
-				for (File arquivo : arquivos) {
-					Gson gson = new Gson();
-					BufferedReader reader = new BufferedReader(new FileReader(arquivo));
+            File diretorio = new File("./arquivos");
+            if (diretorio.isDirectory()) {
+                File arquivos[] = diretorio.listFiles();
+                for (File arquivo : arquivos) {
+                    Gson gson = new Gson();
+                    BufferedReader reader = new BufferedReader(new FileReader(arquivo));
 
-					product = gson.fromJson(reader, Product.class);
+                    product = gson.fromJson(reader, Product.class);
 
-					product.getData().parallelStream().forEach(datum -> {
-						prod = new Prod();
-						if (datum != null) {
+                    product.getData().parallelStream().forEach(datum -> {
+                        prod = new Prod();
+                        if (datum != null) {
 
-							List<Prod> list = this.convertToProd(datum, prod);
+                            List<Prod> list = this.convertToProd(datum, prod);
 
-							Assert.assertNotNull(list);
-						}
+                            Assert.assertNotNull(list);
+                        }
 
-					});
+                    });
 
-				}
-			}
-		} catch (FileNotFoundException ex) {
-			Logger.getLogger(Prod.class.getName()).log(Level.SEVERE, null, ex);
-		}
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Prod.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-	}
+    }
 
-	private List<Prod> convertToProd(Datum datum, Prod prod) {
+    private List<Prod> convertToProd(Datum datum, Prod prod) {
 
-		prod.setIndustry(datum.getIndustry());
-		prod.setOrigin(datum.getOrigin());
-	//	prod.setPrice(datum.getPrice());
-		prod.setProduct(datum.getProduct());
-		prod.setQuantity(datum.getQuantity());
-		prod.setType(datum.getType());
+        prod.setIndustry(datum.getIndustry());
+        prod.setOrigin(datum.getOrigin());
+        //	prod.setPrice(datum.getPrice());
+        prod.setProduct(datum.getProduct());
+        prod.setQuantity(datum.getQuantity());
+        prod.setType(datum.getType());
 
-		listProd.add(prod);
+        listProd.add(prod);
 
-		return listProd;
+        return listProd;
 
-	}
+    }
 
 }
