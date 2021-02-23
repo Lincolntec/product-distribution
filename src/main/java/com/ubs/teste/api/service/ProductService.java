@@ -79,7 +79,7 @@ public class ProductService {
                         this.productRepository.saveAll(listProd);
 
                     } catch (Exception e) {
-                        System.out.println("Error writing files");
+                        logger.info("Error writing files");
                     }
 
                     logger.info("Finished recording the files.");
@@ -112,15 +112,15 @@ public class ProductService {
 
         implementsTheDistribuition(productDTO, distribuitionDTO, list, media, modResto, empresaComMaisProdutos);
 
-        System.out.println("** Existem " + productDTO.getStoryQuantity() + " empresas, " + list.size() + " produtos. "
+        logger.info("** Existem " + productDTO.getStoryQuantity() + " empresas, " + list.size() + " produtos. "
                 + empresaComMaisProdutos + " empresas ficaram com " + (media + 1) + " produtos e " + modResto
                 + " empresa ficaram com  " + media + " produto.");
 
-        System.out.println("Valor medio da empresa 1: " + ((media + 1) * prod.getPrice()));
+        logger.info("Valor medio da empresa 1: " + ((media + 1) * prod.getPrice()));
 
-        System.out.println("O valor medio da empresa 2 é: " + (media) * prod.getPrice());
+        logger.info("O valor medio da empresa 2 é: " + (media) * prod.getPrice());
 
-        System.out.println("Valor de cada produto: " + prod.getPrice());
+        logger.info("Valor de cada produto: " + prod.getPrice());
 
         return distribuitionDTO;
     }
